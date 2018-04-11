@@ -1,8 +1,11 @@
 """Generate Markov text from text files."""
+import os
+import twitter
 import string
 import sys
 from random import choice
 
+api = twitter.Api(consumer_key=os.environ['TWITTER_CONSUMER_KEY'], consumer_secret=os.environ['TWITTER_CONSUMER_SECRET'], access_token_key=os.environ['TWITTER_ACCESS_TOKEN_KEY'], access_token_secret=os.environ['TWITTER_ACCESS_TOKEN_SECRET'])
 
 def open_and_read_file(file_path):
     """Take file path as string; return text as string.
@@ -109,7 +112,7 @@ def make_n_text(chains, n=280):
 
         # Add new words to text
         if chains.get(key):  # does this key exist?
-            if len(word_text) < 3000:
+            if len(word_text) < 30000:
                 value = chains[key]  # look up value of key
                 random_value = choice(value)
                 word_text.append(random_value)  # pick random word and append to text
@@ -122,11 +125,11 @@ def make_n_text(chains, n=280):
     return " ".join(word_text)
 
 
-def return_n_tweet(markov_text, n=280):
+def return_n_tweet(markov_text, n=140):
     """ Returns tweet of n length
     """
 
-    bible_words = ['Jesus', 'God']
+    bible_words = ['Jesus', 'God', 'Father', 'pulsed', 'throbbing', 'heaven', 'Satan', 'cum', 'fuck', 'pussy']
 
     # split markov text on periods, make list
     markov_sentences = markov_text.split('.')
@@ -140,9 +143,23 @@ def return_n_tweet(markov_text, n=280):
     tweet = ''
     index_to_tweet = sentence_index
 
+    #select starting sentence, must be shorter than n
+    while len(markov_sentences[index_to_tweet]) > n:
+        if index_to_tweet == len(markov_sentences) - 1:
+            break
+        else:
+            index_to_tweet += 1
+
+    print index_to_tweet, len(markov_sentences)
+
+    #if 
+
     while len(tweet) + len(markov_sentences[index_to_tweet]) + 1 <= n:
-        tweet = tweet + markov_sentences[index_to_tweet] + "."
-        index_to_tweet += 1
+        if index_to_tweet == len(markov_sentences)-1:
+            break
+        else:
+            tweet = tweet + markov_sentences[index_to_tweet] + "."
+            index_to_tweet += 1
 
     return tweet
 
@@ -226,6 +243,7 @@ def make_n_chain(text_string, n):
     return chains
 
 
+
 input_path = sys.argv[1]
 
 # Open the file and turn it into one long string
@@ -236,10 +254,21 @@ input_text = open_and_read_file(input_path)
 n = int(sys.argv[2])
 chains = make_n_chain(input_text, n)
 
-# Produce random text
-#random_text = make_text(chains)
+# while True:
+    # Produce random text
+    #random_text = make_text(chains)
 random_text = make_n_text(chains, n)
 
-print return_n_tweet(random_text)
+possible_tweet = return_n_tweet(random_text)
 
 #print random_text
+print possible_tweet
+
+if possible_tweet != '':
+    is_tweetable = raw_input("Do you want to tweet? y/n ")
+
+    if is_tweetable == 'y':
+        api.PostUpdate(possible_tweet)
+        
+
+
