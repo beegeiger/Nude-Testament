@@ -112,7 +112,7 @@ def make_n_text(chains, n=280):
 
         # Add new words to text
         if chains.get(key):  # does this key exist?
-            if len(word_text) < 30000:
+            if len(word_text) < 80000:
                 value = chains[key]  # look up value of key
                 random_value = choice(value)
                 word_text.append(random_value)  # pick random word and append to text
@@ -130,7 +130,7 @@ def return_n_tweet(markov_text, n=140):
     """
 
     bible_words = ['Jesus', 'God', 'Father', 'pulsed', 'throbbing', 'heaven', 'Satan', 'cum', 'fuck', 'pussy']
-
+    bible_words = []
     # split markov text on periods, make list
     markov_sentences = markov_text.split('.')
     # possible for loop to iterate through sentences
