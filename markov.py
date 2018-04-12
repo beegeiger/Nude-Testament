@@ -130,7 +130,7 @@ def return_n_tweet(markov_text, n=140):
     """
 
     bible_words = ['Jesus', 'God', 'Father', 'pulsed', 'throbbing', 'heaven', 'Satan', 'cum', 'fuck', 'pussy']
-    bible_words = []
+    # bible_words = []
     # split markov text on periods, make list
     markov_sentences = markov_text.split('.')
     # possible for loop to iterate through sentences
@@ -158,7 +158,7 @@ def return_n_tweet(markov_text, n=140):
         if index_to_tweet == len(markov_sentences)-1:
             break
         else:
-            tweet = tweet + markov_sentences[index_to_tweet] + "."
+            tweet = tweet + markov_sentences[index_to_tweet][1:] + ". "
             index_to_tweet += 1
 
     return tweet
@@ -252,23 +252,26 @@ input_text = open_and_read_file(input_path)
 # Get a Markov chain
 #chains = make_chains(input_text)
 n = int(sys.argv[2])
+
 chains = make_n_chain(input_text, n)
 
-# while True:
+while True:
     # Produce random text
     #random_text = make_text(chains)
-random_text = make_n_text(chains, n)
+    random_text = make_n_text(chains, n)
 
-possible_tweet = return_n_tweet(random_text)
+    possible_tweet = return_n_tweet(random_text)
 
 #print random_text
-print possible_tweet
+    print possible_tweet
 
-if possible_tweet != '':
-    is_tweetable = raw_input("Do you want to tweet? y/n ")
+    if possible_tweet != '':
+        is_tweetable = raw_input("Do you want to tweet? y/n ")
 
-    if is_tweetable == 'y':
-        api.PostUpdate(possible_tweet)
+        if is_tweetable == 'y':
+            api.PostUpdate(possible_tweet)
+            break
+
         
 
 
